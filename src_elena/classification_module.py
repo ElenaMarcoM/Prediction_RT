@@ -210,24 +210,24 @@ def subgroups_basedon_superclass(sqlHost, sqlUser, sqlPassword, sqlDatabase, gro
 
     df_salida.to_csv(outputFile, sep='\t', index=False)
 
-def ids_subgroupCompounds(subgroups_file, rtdata_file, choosen_superclass):
+def ids_subgroupCompounds(subgroups_file, rtdata_file, choosen_class, class_type):
     """
         Obtains the ids of the compounds that are associated with a specific superclass.
 
         :param subgroups_file: path to file with compound parents dataset
         :param rtdata_file: path to exit file
-        :param choosen_superclass: choosen superclass
+        :param choosen_class: choosen superclass
         :return List with all ids rom compounds in group
     """
     df_subgroups = pd.read_csv(subgroups_file, sep='\t')
     df_rtdata = pd.read_csv(rtdata_file, sep='\t')
     cids_found = []
-    superclass_compounds = df_subgroups[df_subgroups['super_class'] == choosen_superclass]
+    superclass_compounds = df_subgroups[df_subgroups[class_type] == choosen_class]
     compounds_str = superclass_compounds.iloc[0]['compounds']
     inchikeys_sc_compounds = [mol.strip() for mol in compounds_str.split(',') if mol.strip()]
 
     if superclass_compounds.empty:
-        print(f"Could not  find superclass: {choosen_superclass}")
+        print(f"Could not  find: {choosen_class}")
         return []
 
     for _, row in df_rtdata.iterrows():
@@ -241,7 +241,7 @@ def ids_subgroupCompounds(subgroups_file, rtdata_file, choosen_superclass):
 
     return cids_found
 
-def obtain_fpSubgroup(subgroups, rtdata, choosen_sc, all_fingerprints, subgroup_fingerprints):
+def obtain_fpSubgroup(subgroups, rtdata, choosen_class, class_type, all_fingerprints, subgroup_fingerprints):
     """
         Obtains the ids of the compounds that are associated with a specific superclass.
 
@@ -250,7 +250,7 @@ def obtain_fpSubgroup(subgroups, rtdata, choosen_sc, all_fingerprints, subgroup_
         :param choosen_superclass: choosen superclass
         :return List with all ids rom compounds in group
     """
-    id_list = ids_subgroupCompounds(subgroups, rtdata, choosen_sc)
+    id_list = ids_subgroupCompounds(subgroups, rtdata, choosen_class, class_type)
 
     df = pd.read_csv(all_fingerprints)
 

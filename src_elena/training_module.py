@@ -150,8 +150,11 @@ def data_from_csv(csv_path):
     for c in v_cols + ['rt']:
         df[c] = pd.to_numeric(df[c], errors='coerce')
 
-    X = df[v_cols].to_numpy(dtype=float)  # matriz (n_filas, n_features)
-    y = df['rt'].to_numpy(dtype=float)  # vector (n_filas,)
+    mask = df['rt'] >= 300
+    filtered_data = df[mask]
+
+    X = filtered_data[v_cols].to_numpy(dtype=float)
+    y = filtered_data['rt'].to_numpy(dtype=float)
     return X, y
 # -----------------------------------
 
